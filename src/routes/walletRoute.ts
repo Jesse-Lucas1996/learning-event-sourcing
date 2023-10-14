@@ -25,7 +25,7 @@ router.post('/credit-wallet', (req: Request, res: Response) => {
 
   getEvents((events: WalletEvent[]) => {
     const walletState = reduce(events);
-    res.json(walletState);
+    res.json({walletState});
   });
 });
 

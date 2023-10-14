@@ -10,7 +10,6 @@ const eventStore: WalletEvent[] = [];
 
 function reduce(events: WalletEvent[]): WalletAggregate {
     return events.reduce((aggregate, event) => {
-      console.log(aggregate)
       switch (event.type) {
         case 'CreditWallet':
           aggregate.balance += event.amount;
