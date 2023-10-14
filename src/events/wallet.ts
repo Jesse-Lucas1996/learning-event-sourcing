@@ -8,6 +8,7 @@ interface WalletAggregate {
 
 const eventStore: WalletEvent[] = [];
 
+
 function reduce(events: WalletEvent[]): WalletAggregate {
     return events.reduce((aggregate, event) => {
       switch (event.type) {
@@ -15,12 +16,7 @@ function reduce(events: WalletEvent[]): WalletAggregate {
           aggregate.balance += event.amount;
           break;
   
-        case 'DebitWallet':
-          if (event.amount > aggregate.balance) {
-            console.log('Insufficient funds')
-            break;
-          }
-  
+        case 'DebitWallet': 
           aggregate.balance -= event.amount;
           break;
       }
@@ -31,16 +27,17 @@ function reduce(events: WalletEvent[]): WalletAggregate {
     }, { balance: 0, version: 0 });
   }
 
-  function getEvents(callback: (events: WalletEvent[]) => void) {
-    walletDB.find({}, (err: Error, events: WalletEvent[]) => {
-      if (err) {
-        console.error('Error fetching events:', err);
-        callback([]);
-      } else {
-        callback(events);
-      }
+  function getEvents(): Promise<WalletEvent[]> {
+    return new Promise((resolve, reject) => {
+      walletDB.find({}, (err: Error, events: WalletEvent[]) => {
+        if (err) {
+          console.error('Error fetching events:', err);
+          reject(err);
+        } else {
+          resolve(events);
+        }
+      });
     });
   }
-  
 
 export { eventStore, reduce, getEvents };
