@@ -1,7 +1,8 @@
 import { walletDB } from '../database/walletDatabase';
+import { v4 as uuidv4 } from 'uuid';
 
 function generateEventSignature(): string {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  return uuidv4();
 }
 
 function isEventSignatureDuplicate(eventSignature: string): Promise<boolean> {
