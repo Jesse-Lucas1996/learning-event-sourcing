@@ -1,10 +1,12 @@
 interface CreditWalletEvent {
     type: 'CreditWallet';
+    correlationId: string;
     amount: number;
   }
   
   interface DebitWalletEvent {
     type: 'DebitWallet';
+    correlationId: string;
     amount: number;
   }
   

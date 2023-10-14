@@ -10,12 +10,18 @@ const eventStore: WalletEvent[] = [];
 
 function reduce(events: WalletEvent[]): WalletAggregate {
     return events.reduce((aggregate, event) => {
+      console.log(aggregate)
       switch (event.type) {
         case 'CreditWallet':
           aggregate.balance += event.amount;
           break;
   
         case 'DebitWallet':
+          if (event.amount > aggregate.balance) {
+            console.log('Insufficient funds')
+            break;
+          }
+  
           aggregate.balance -= event.amount;
           break;
       }

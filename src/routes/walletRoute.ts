@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { reduce, getEvents } from '../events/wallet';
 import { walletDB } from '../database/walletDatabase';
 import { WalletEvent } from '../events/events';
+import { v4 as uuidv4 } from 'uuid';
 
 const router = Router();
 
@@ -10,6 +11,7 @@ router.post('/credit-wallet', (req: Request, res: Response) => {
 
   const creditEvent: WalletEvent = {
     type: 'CreditWallet',
+    correlationId: uuidv4(),
     amount: amount,
   };
 
@@ -32,6 +34,7 @@ router.post('/debit-wallet', (req: Request, res: Response) => {
 
   const debitEvent: WalletEvent = {
     type: 'DebitWallet',
+    correlationId: uuidv4(),
     amount: amount,
   };
 
@@ -45,7 +48,7 @@ router.post('/debit-wallet', (req: Request, res: Response) => {
 
   getEvents((events: WalletEvent[]) => {
     const walletState = reduce(events);
-    res.json(walletState);
+    res.json({walletState});
   });
 });
 
