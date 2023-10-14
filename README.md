@@ -12,8 +12,8 @@ Request Body:
 Copy code
 ```
 {
-  "cardId": "string",
-  "userId": "string"
+  "cardId": "1232193",
+  "userId": "101"
 } 
 ```
 
@@ -28,9 +28,9 @@ Request Body:
 Copy code
 ```
 {
-  "cardId": "string",
-  "userId": "string",
-  "totalPrice": number
+  "cardId": "1232193",
+  "userId": "101",
+  "totalPrice": 20
 }
 ```
 
