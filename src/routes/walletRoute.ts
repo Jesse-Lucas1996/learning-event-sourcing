@@ -1,6 +1,5 @@
 import { Router, Request, Response } from "express";
-import { reduce, getEvents } from "../events/wallet";
-import { walletDB } from "../database/walletDatabase";
+import { reduce, getEvents, eventStore } from "../events/wallet";
 import { WalletEvent } from "../events/events";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -14,7 +13,6 @@ router.post("/credit-wallet", async (req: Request, res: Response) => {
   const { amount }: { amount: number } = req.body;
   const eventSignature = generateEventSignature();
   const isDuplicate = await isEventSignatureDuplicate(eventSignature);
-
   if (isDuplicate) {
     return res.status(400).json({ error: "Duplicate event signature" });
   }
@@ -26,17 +24,16 @@ router.post("/credit-wallet", async (req: Request, res: Response) => {
     eventSignature: eventSignature,
     amount: amount,
   };
+  const eventSaved = eventStore.push(creditEvent);
 
-  walletDB.insert(creditEvent, async (err, event) => {
-    if (err) {
-      console.error("Error saving event:", err);
-      return res.status(500).json({ error: "Internal Server Error" });
-    }
-    console.log("Event saved:", event);
-    const events = await getEvents();
-    const walletState = reduce(events);
-    res.json({ walletState });
-  });
+  if (!eventSaved) {
+    console.error("Error saving event:");
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+  console.log("Event saved:", creditEvent);
+  const events = await getEvents();
+  const walletState = reduce(events);
+  res.json({ walletState });
 });
 
 router.post("/debit-wallet", async (req: Request, res: Response) => {
@@ -62,17 +59,17 @@ router.post("/debit-wallet", async (req: Request, res: Response) => {
     eventSignature: eventSignature,
     amount: amount,
   };
+  const eventSaved = eventStore.push(debitEvent);
 
-  walletDB.insert(debitEvent, async (err: any, newEvent: WalletEvent) => {
-    if (err) {
-      console.error("Error saving event:", err);
-      return res.status(500).json({ error: "Internal Server Error" });
-    }
-    console.log("Event saved:", newEvent);
-    const events = await getEvents();
-    const walletState = reduce(events);
-    res.json({ walletState });
-  });
+  if (!eventSaved) {
+    console.error("Error saving event:");
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+
+  console.log("Event saved:", debitEvent);
+  const updatedEvents = await getEvents();
+  const updatedWalletState = reduce(updatedEvents);
+  res.json({ updatedWalletState });
 });
 
 export default router;

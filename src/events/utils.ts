@@ -1,5 +1,5 @@
-import { walletDB } from '../database/walletDatabase';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import { eventStore } from "./wallet";
 
 function generateEventSignature(): string {
   return uuidv4();
@@ -7,13 +7,14 @@ function generateEventSignature(): string {
 
 function isEventSignatureDuplicate(eventSignature: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
-    walletDB.findOne({ eventSignature }, (err, doc) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(doc !== null);
-      }
-    });
+    const isDuplicate = eventStore.some(
+      (event) => event.eventSignature === eventSignature
+    );
+    if (isDuplicate) {
+      resolve(true);
+    } else {
+      resolve(false);
+    }
   });
 }
 

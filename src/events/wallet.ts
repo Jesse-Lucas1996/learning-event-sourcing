@@ -1,4 +1,3 @@
-import { walletDB } from "../database/walletDatabase";
 import { WalletEvent } from "./events";
 
 interface WalletAggregate {
@@ -30,16 +29,7 @@ function reduce(events: WalletEvent[]): WalletAggregate {
 }
 
 function getEvents(): Promise<WalletEvent[]> {
-  return new Promise((resolve, reject) => {
-    walletDB.find({}, (err: Error, events: WalletEvent[]) => {
-      if (err) {
-        console.error("Error fetching events:", err);
-        reject(err);
-      } else {
-        resolve(events);
-      }
-    });
-  });
+  return Promise.resolve(eventStore);
 }
 
 export { eventStore, reduce, getEvents };
