@@ -1,19 +1,9 @@
-interface CreditWalletEvent {
-    type: 'CreditWallet';
-    correlationId: string;
-    transactionId: string;
-    eventSignature: string;
-    amount: number;
-  }
-  
-  interface DebitWalletEvent {
-    type: 'DebitWallet';
-    correlationId: string;
-    transactionId: string;
-    eventSignature: string;
-    amount: number;
-  }
-  
-  type WalletEvent = CreditWalletEvent | DebitWalletEvent;
-  
-  export { CreditWalletEvent, DebitWalletEvent, WalletEvent };
+type WalletEvent = {
+  type: "CreditWallet" | "DebitWallet";
+  correlationId: string;
+  transactionId: string;
+  eventSignature: string;
+  amount: number;
+};
+
+export { WalletEvent };
